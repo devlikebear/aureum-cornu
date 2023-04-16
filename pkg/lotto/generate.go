@@ -9,7 +9,16 @@ import (
 var prevSeed int64
 
 // GenerateLottoNumbers 1부터 45까지의 숫자 중에서 6개를 랜덤으로 생성한다.
-func GenerateLottoNumbers() []int {
+func GenerateLottoNumbers(numberOfGenerate int) [][]int {
+	lottoNumbers := make([][]int, 0, numberOfGenerate)
+	for i := 0; i < numberOfGenerate; i++ {
+		lottoNumbers = append(lottoNumbers, generateLottoNumber())
+	}
+	return lottoNumbers
+}
+
+// generateLottoNumber 1부터 45까지의 숫자 중에서 6개를 랜덤으로 생성한다.
+func generateLottoNumber() []int {
 	// 랜덤 시드를 지역적으로 생성한다.
 	seed := time.Now().UnixNano()
 	for seed == prevSeed {
