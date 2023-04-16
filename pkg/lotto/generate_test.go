@@ -8,11 +8,11 @@ import (
 func TestGenerateLottoNumbersOutOfRange(t *testing.T) {
 	// Given
 	// When
-	lottoNumbers := GenerateLottoNumbers()
+	lottoNumbers := GenerateLottoNumbers(1)
 	// Then
-	for _, number := range lottoNumbers {
+	for _, number := range lottoNumbers[0] {
 		if number < 1 || number > 45 {
-			t.Errorf("Expected lotto number to be between 1 and 45, got %d", number)
+			t.Errorf("Expected lotto number to be in range, got %d", number)
 		}
 	}
 }
@@ -21,14 +21,12 @@ func TestGenerateLottoNumbersOutOfRange(t *testing.T) {
 func TestGenerateLottoNumbersDuplicates(t *testing.T) {
 	// Given
 	// When
-	lottoNumbers := GenerateLottoNumbers()
+	lottoNumbers := GenerateLottoNumbers(1)
 	// Then
-	numbers := make(map[int]bool)
-	for _, number := range lottoNumbers {
-		if _, exists := numbers[number]; exists {
-			t.Errorf("Expected lotto number to be unique, got %d", number)
+	for i := 0; i < len(lottoNumbers[0])-1; i++ {
+		if lottoNumbers[0][i] == lottoNumbers[0][i+1] {
+			t.Errorf("Expected lotto number to be unique, got %d", lottoNumbers[0])
 		}
-		numbers[number] = true
 	}
 }
 
@@ -36,10 +34,10 @@ func TestGenerateLottoNumbersDuplicates(t *testing.T) {
 func TestGenerateLottoNumbersLength(t *testing.T) {
 	// Given
 	// When
-	lottoNumbers := GenerateLottoNumbers()
+	lottoNumbers := GenerateLottoNumbers(1)
 	// Then
-	if len(lottoNumbers) != 6 {
-		t.Errorf("Expected lotto number to be 6, got %d", len(lottoNumbers))
+	if len(lottoNumbers[0]) != 6 {
+		t.Errorf("Expected lotto number to be 6, got %d", lottoNumbers[0])
 	}
 }
 
@@ -47,11 +45,11 @@ func TestGenerateLottoNumbersLength(t *testing.T) {
 func TestGenerateLottoNumbersSorted(t *testing.T) {
 	// Given
 	// When
-	lottoNumbers := GenerateLottoNumbers()
+	lottoNumbers := GenerateLottoNumbers(1)
 	// Then
-	for i := 0; i < len(lottoNumbers)-1; i++ {
-		if lottoNumbers[i] > lottoNumbers[i+1] {
-			t.Errorf("Expected lotto number to be sorted, got %d", lottoNumbers)
+	for i := 0; i < len(lottoNumbers[0])-1; i++ {
+		if lottoNumbers[0][i] > lottoNumbers[0][i+1] {
+			t.Errorf("Expected lotto number to be sorted, got %d", lottoNumbers[0])
 		}
 	}
 }
@@ -60,12 +58,8 @@ func TestGenerateLottoNumbersSorted(t *testing.T) {
 func TestGenerateLottoNumbersDuplicatesN(t *testing.T) {
 	// Given
 	// When
-	lottoNumbers := make([][]int, 0, 5)
-	for i := 0; i < 5; i++ {
-		lottoNumbers = append(lottoNumbers, GenerateLottoNumbers())
-	}
+	lottoNumbers := GenerateLottoNumbers(1000)
 	// Then
-	// 생성된 로또번호가 중복되는지 비교한다.
 	for i := 0; i < len(lottoNumbers)-1; i++ {
 		for j := i + 1; j < len(lottoNumbers); j++ {
 			if lottoNumbers[i][0] == lottoNumbers[j][0] &&
@@ -74,7 +68,7 @@ func TestGenerateLottoNumbersDuplicatesN(t *testing.T) {
 				lottoNumbers[i][3] == lottoNumbers[j][3] &&
 				lottoNumbers[i][4] == lottoNumbers[j][4] &&
 				lottoNumbers[i][5] == lottoNumbers[j][5] {
-				t.Errorf("Expected lotto number to be unique, got %v, %v", lottoNumbers[i], lottoNumbers[j])
+				t.Errorf("Expected lotto number to be unique, got %d", lottoNumbers[i])
 			}
 		}
 	}
