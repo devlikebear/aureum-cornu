@@ -1,43 +1,39 @@
-// main.go
 package main
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/devlikebear/aureum-cornu/pkg/lotto"
-	"github.com/labstack/echo/v5"
-	"github.com/pocketbase/pocketbase"
-	"github.com/pocketbase/pocketbase/core"
+	"github.com/devlikebear/aureum-cornu/ui"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    app := pocketbase.New()
+	
+	r := gin.Default()
 
-    // 로또번호 조회하는 API 추가
-    app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-        e.Router.AddRoute(echo.Route{
-            Method:  http.MethodGet,
-            Path:    "/api/lottos",
-            Handler: lottoHandler,
-        })
-        return nil  
-    })
+	// frontend 포함
+	r.StaticFS("/web", ui.GetFileSystem())
 
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/web")
+	})
 
-    if err := app.Start(); err != nil {
-        log.Fatal(err)
-    }
+	r.GET("/api/lottos", lottoHandler)
+
+	r.Run(":8080")
 }
 
-func lottoHandler(c echo.Context) error {
+func lottoHandler(c *gin.Context) {
     // 생성할 로또번호 개수를 파라미터로 받는다.
-    count := c.QueryParam("count")
+    count := c.Query("count")
     n, _  := strconv.Atoi(count)
 
     number := lotto.GenerateLottoNumbers(n)
-    return c.JSON(http.StatusOK, map[string]interface{}{
+
+
+    c.JSON(http.StatusOK, map[string]interface{}{
         "numbers": number,
     })
 }
